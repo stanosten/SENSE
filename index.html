@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SENSE — Портрет по фото на холсте</title>
-    <!-- Google Fonts: антиква для заголовков + основной текст -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,7 +14,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
-    <!-- Tailwind via CDN (используем для сетки и типографики) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -42,7 +40,6 @@
         },
       };
     </script>
-    <!-- Базовые Tailwind-слои под наш дизайн -->
     <style type="text/tailwindcss">
       @layer base {
         body {
@@ -65,8 +62,6 @@
         }
       }
     </style>
-    <!-- Кастомные стили и маски -->
-    <!-- Иконки сайта -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -92,9 +87,7 @@
       <span class="morphing-bg__shape morphing-bg__shape--2"></span>
       <span class="morphing-bg__shape morphing-bg__shape--3"></span>
     </div>
-    <!-- Фоновая сетка + плавный скролл оборачиваются в Lenis-контейнер -->
     <div id="lenis-root">
-      <!-- Липкая шапка (на всю ширину) -->
       <header class="site-header">
         <div
           class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
@@ -151,9 +144,7 @@
           </button>
         </div>
       </div>
-      <!-- HERO -->
       <section id="hero" class="relative min-h-screen">
-        <!-- Лавовые кляксы фона -->
         <div class="pointer-events-none absolute inset-0 -z-10">
           <div
             class="blob-bg blob-bg-1"
@@ -174,11 +165,9 @@
         <div
           class="relative mx-auto flex min-h-screen max-w-6xl flex-col px-5 pb-16 pt-8 sm:px-8 lg:px-10"
         >
-          <!-- Основной блок hero -->
           <div
             class="grid flex-1 items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
           >
-            <!-- Текст -->
             <div class="space-y-8">
               <h1
                 class="js-hero-title font-heading font-demi-bold max-w-2xl text-5xl leading-[1.08] tracking-tight text-white sm:text-6xl sm:leading-[1.06] lg:text-7xl lg:leading-[1.04]"
@@ -209,7 +198,6 @@
                 </button>
               </div>
             </div>
-            <!-- Блок с портретом и слайдером -->
             <div class="relative flex justify-center lg:justify-end">
               <div class="hero-portrait-wrapper group">
                 <svg
@@ -220,12 +208,10 @@
                   xmlns:xlink="http://www.w3.org/1999/xlink"
                 >
                   <defs>
-                    <!-- Основная клякса для маски -->
                     <clipPath
                       id="heroBlobClip"
                       clipPathUnits="objectBoundingBox"
                     >
-                      <!-- Используем нормализованные координаты (0..1) для лучшего масштабирования -->
                       <path
                         id="heroBlobPath"
                         d="M0.81,0.53 C0.79,0.64 0.72,0.73 0.64,0.8 C0.56,0.87 0.47,0.93 0.37,0.94 C0.27,0.96 0.17,0.94 0.1,0.88 C0.04,0.82 0.01,0.72 0.01,0.62 C0,0.52 0.02,0.42 0.06,0.33 C0.1,0.24 0.17,0.16 0.25,0.11 C0.34,0.06 0.44,0.03 0.54,0.04 C0.64,0.05 0.74,0.09 0.8,0.17 C0.86,0.24 0.9,0.33 0.91,0.43 C0.83,0.46 0.83,0.46 0.81,0.53 Z"
@@ -233,7 +219,6 @@
                       />
                     </clipPath>
                   </defs>
-                  <!-- Заливка-клякса под слайдером, использующая ту же форму -->
                   <g class="hero-blob-bg">
                     <use
                       xlink:href="#heroBlobPath"
@@ -241,9 +226,7 @@
                       transform="scale(600)"
                     />
                   </g>
-                  <!-- Содержимое слайдера, обрезанное маской -->
                   <g clip-path="url(#heroBlobClip)">
-                    <!-- Слайды: реальные изображения из папки img -->
                     <image
                       xlink:href="img/slider1.webp"
                       href="img/slider1.webp"
@@ -276,14 +259,12 @@
                     />
                   </g>
                 </svg>
-                <!-- Тень под кляксой -->
                 <div class="hero-portrait-shadow" aria-hidden="true"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <!-- О проекте -->
       <section
         id="about"
         class="js-reveal border-t border-sense-blob-2/20 about-section"
@@ -418,7 +399,6 @@
           </div>
         </div>
       </section>
-      <!-- Наши работы -->
       <section id="works" class="js-reveal">
         <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
           <div
@@ -429,7 +409,6 @@
             </h2>
           </div>
           <div class="grid gap-8 md:grid-cols-3">
-            <!-- Карточка работы -->
             <article class="space-y-4">
               <div class="work-blob">
                 <img
@@ -1544,12 +1523,9 @@
         </div>
       </footer>
     </div>
-    <!-- GSAP, ScrollTrigger, Lenis -->
-    <!-- Без integrity, чтобы исключить блокировку из‑за несовпадения хеша -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.35/dist/lenis.min.js"></script>
-    <!-- Наш основной фронтенд-код -->
     <script src="elasticScale.js"></script>
     <script src="main.js"></script>
   </body>

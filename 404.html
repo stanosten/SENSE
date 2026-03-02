@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SENSE — Страница не найдена</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "sense-bg": "#F4ECDB",
+              "sense-ink": "#3A2B24",
+              "sense-muted": "#6F5C4D",
+              "sense-blob-1": "#D3AAA4",
+              "sense-blob-2": "#C1AC93",
+              "sense-blob-3": "#BC9180",
+            },
+            fontFamily: {
+              heading: ['"Montserrat"', '"Playfair Display"', "serif"],
+              body: ["Montserrat", "system-ui", "sans-serif"],
+            },
+            fontWeight: {
+              "extra-light": "100",
+              "demi-bold": "600",
+              heavy: "900",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      @layer base {
+        body {
+          @apply bg-sense-bg text-sense-ink font-body antialiased;
+        }
+
+        ::selection {
+          @apply bg-sense-blob-1/60 text-sense-ink;
+        }
+      }
+    </style>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3A2B24" />
+    <meta name="theme-color" content="#F4ECDB" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="overflow-x-hidden">
+    <div class="morphing-bg" aria-hidden="true">
+      <span class="morphing-bg__shape morphing-bg__shape--1"></span>
+      <span class="morphing-bg__shape morphing-bg__shape--2"></span>
+      <span class="morphing-bg__shape morphing-bg__shape--3"></span>
+    </div>
+    <main class="relative min-h-screen">
+      <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div class="blob-bg blob-bg-1"></div>
+        <div class="blob-bg blob-bg-2"></div>
+        <div class="blob-bg blob-bg-3 is-floating"></div>
+      </div>
+      <div class="mx-auto flex min-h-screen max-w-6xl items-center px-5 py-12 sm:px-8 lg:px-10">
+        <section class="error-card">
+          <h1 class="error-code about-title--blob">404</h1>
+          <p class="error-title">Страница не найдена</p>
+          <p class="error-text">
+            Похоже, адрес введён неверно или страница была перемещена.
+          </p>
+          <div class="error-actions">
+            <a
+              href="index.html"
+              class="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-xs font-medium bg-sense-blob-3 text-white shadow hover:shadow-lg transition-colors"
+            >
+              На главную
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

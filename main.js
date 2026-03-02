@@ -1,10 +1,6 @@
-// Основные анимации для лендинга SENSE
-
-// Инициализация Lenis для плавного скролла
 let lenis;
 
 function initLenis() {
-  // Lenis может отсутствовать, если CDN не загрузился
   const root = document.documentElement;
   if (typeof Lenis === "undefined") {
     root.classList.add("scroll-smooth");
@@ -47,7 +43,6 @@ function initPreloader() {
   }
 }
 
-// Мягкий скролл к секциям по клику
 function initSmoothAnchors() {
   const links = document.querySelectorAll("[data-scroll]");
 
@@ -67,7 +62,7 @@ function initSmoothAnchors() {
 
       const scrollTo = () => {
         const rect = el.getBoundingClientRect();
-        const offset = window.pageYOffset + rect.top - 80; // небольшой отступ от верха
+        const offset = window.pageYOffset + rect.top - 80;
 
         if (lenis) {
           if (typeof lenis.start === "function") lenis.start();
@@ -165,28 +160,12 @@ function initNavActiveState() {
   onScroll();
 }
 
-// Анимация "проявления" блоков при скролле
 function initRevealOnScroll() {
   if (!window.gsap || !window.ScrollTrigger) return;
 
   gsap.registerPlugin(ScrollTrigger);
 
   const sections = gsap.utils.toArray(".js-reveal");
-  const debugReveal = false;
-  const logReveal = (phase, section, self) => {
-    if (!debugReveal) return;
-    const id = section.id ? `#${section.id}` : section.className || "section";
-    const scrollY = window.scrollY || window.pageYOffset || 0;
-    const viewport = window.innerHeight || document.documentElement.clientHeight || 0;
-    console.debug("[reveal]", phase, id, {
-      scrollY,
-      viewport,
-      start: self?.start,
-      end: self?.end,
-      progress: self?.progress,
-      direction: self?.direction,
-    });
-  };
 
   const prefersReducedMotion =
     window.matchMedia &&
@@ -231,9 +210,6 @@ function initRevealOnScroll() {
         stagger,
         overwrite: "auto",
       });
-      if (Array.isArray(batch)) {
-        batch.forEach((section) => logReveal("enter", section, self));
-      }
     },
     onEnterBack: (batch, self) => {
       gsap.to(batch, {
@@ -244,9 +220,6 @@ function initRevealOnScroll() {
         stagger,
         overwrite: "auto",
       });
-      if (Array.isArray(batch)) {
-        batch.forEach((section) => logReveal("enterBack", section, self));
-      }
     },
     onLeave: (batch, self) => {
       if (Array.isArray(batch) && exitSections.length) {
@@ -262,9 +235,6 @@ function initRevealOnScroll() {
           });
         }
       }
-      if (Array.isArray(batch)) {
-        batch.forEach((section) => logReveal("leave", section, self));
-      }
     },
     onLeaveBack: (batch, self) => {
       if (Array.isArray(batch) && exitSections.length) {
@@ -279,9 +249,6 @@ function initRevealOnScroll() {
             overwrite: "auto",
           });
         }
-      }
-      if (Array.isArray(batch)) {
-        batch.forEach((section) => logReveal("leaveBack", section, self));
       }
     },
     fastScrollEnd: true,
@@ -601,7 +568,6 @@ function initBlobBg3Intro() {
   }, 1700);
 }
 
-// Фоновые кляксы, которые "плавают" и слегка меняют форму
 function initFloatingBlobs() {
   if (!window.gsap) return;
 
@@ -642,7 +608,6 @@ function initFloatingBlobs() {
   });
 }
 
-// Липкий хедер с полупрозрачным фоном при скролле
 function initStickyHeader() {
   const header = document.querySelector(".site-header");
   if (!header) return;
@@ -657,7 +622,6 @@ function initStickyHeader() {
     }
   };
 
-  // Если Lenis инициализирован — слушаем его скролл
   if (lenis) {
     lenis.on("scroll", (e) => {
       const y = typeof e.scroll === "number" ? e.scroll : window.scrollY || window.pageYOffset || 0;
@@ -665,14 +629,12 @@ function initStickyHeader() {
     });
     applyState(window.scrollY || window.pageYOffset || 0);
   } else {
-    // Фоллбек на обычный скролл
     const onScroll = () => applyState(window.scrollY || window.pageYOffset || 0);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
   }
 }
 
-// Плавное "плавание" всей кляксы-слайдера
 function initHeroBlobFloat() {
   if (!window.gsap) return;
 
@@ -702,7 +664,6 @@ function initHeroBlobFloat() {
     );
 }
 
-// Слайдер в кляксе hero
 function initHeroSlider() {
   if (!window.gsap) return;
 
@@ -764,7 +725,6 @@ function initHeroSlider() {
   gsap.delayedCall(3, loop);
 }
 
-// Деформация кляксы с портретом и маски при ховере
 function initHeroBlobHover() {
   if (!window.gsap) return;
 
@@ -776,7 +736,6 @@ function initHeroBlobHover() {
   const baseD = blobPath.getAttribute("d");
   const hoverD = blobPath.dataset.hover;
 
-  // медленное фоновое "дыхание" формы маски — эффект лавовой лампы
   let morphTl = null;
   if (hoverD) {
     morphTl = gsap.timeline({
@@ -833,7 +792,6 @@ function initHeroBlobHover() {
     if (morphTl) {
       morphTl.timeScale(1);
     } else if (baseD) {
-      // на всякий случай возвращаем форму
       tl.to(
         blobPath,
         {
@@ -850,7 +808,6 @@ function initHeroBlobHover() {
   wrapper.addEventListener("mouseleave", hoverOut);
 }
 
-// Небольшая органическая деформация карточек работ при ховере
 function initWorkBlobsHover() {
   if (!window.gsap) return;
 
@@ -2016,7 +1973,6 @@ function renderPricingTestPanel(results) {
   document.body.appendChild(panel);
 }
 
-// Инициализация всего после загрузки DOM
 window.addEventListener("DOMContentLoaded", () => {
   initPreloader();
   initLenis();
