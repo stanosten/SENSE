@@ -1,0 +1,14 @@
+[24012:28824:0228/205738.062:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[24012:28824:0228/205738.225:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[17728:7020:0301/104059.933:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[17728:7020:0301/104100.063:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[20440:8768:0301/150505.528:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[20440:8768:0301/150505.683:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[15432:10128:0301/165054.720:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[15432:10128:0301/165054.867:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[14792:19512:0301/184319.480:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[14792:19512:0301/184319.626:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[16872:8680:0302/100055.855:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[16872:8680:0302/100056.294:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####
+[19912:19092:0302/122200.000:INFO:electron\shell\app\electron_main_delegate.cc:572] #### AhaElectron (relauncher)  Startup #### cmd:  --no-sandbox
+[19912:19092:0302/122200.185:INFO:electron\shell\app\electron_main_delegate.cc:299] #### AhaElectron (relauncher)  Shutdown ####

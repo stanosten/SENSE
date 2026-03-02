@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SENSE — Портрет по фото на холсте</title>
+    <!-- Google Fonts: антиква для заголовков + основной текст -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <!-- Tailwind via CDN (используем для сетки и типографики) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "sense-bg": "#F4ECDB",
+              "sense-ink": "#3A2B24",
+              "sense-muted": "#6F5C4D",
+              "sense-blob-1": "#D3AAA4",
+              "sense-blob-2": "#C1AC93",
+              "sense-blob-3": "#BC9180",
+            },
+            fontFamily: {
+              heading: ['"Montserrat"', '"Playfair Display"', "serif"],
+              body: ["Montserrat", "system-ui", "sans-serif"],
+            },
+            fontWeight: {
+              "extra-light": "100",
+              "demi-bold": "600",
+              heavy: "900",
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Базовые Tailwind-слои под наш дизайн -->
+    <style type="text/tailwindcss">
+      @layer base {
+        body {
+          @apply bg-sense-bg text-sense-ink font-body antialiased;
+        }
+
+        ::selection {
+          @apply bg-sense-blob-1/60 text-sense-ink;
+        }
+      }
+
+      @layer components {
+        .nav-link {
+          @apply text-sm tracking-wide text-sense-muted hover:text-sense-ink transition-colors;
+        }
+
+        .btn-primary {
+          @apply inline-flex items-center justify-center rounded-full px-8 py-3 text-sm font-medium
+        bg-white text-sense-ink shadow-sm hover:shadow-lg transition-all;
+        }
+      }
+    </style>
+    <!-- Кастомные стили и маски -->
+    <!-- Иконки сайта -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3A2B24" />
+    <meta name="theme-color" content="#F4ECDB" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body class="overflow-x-hidden">
+    <div
+      class="site-preloader"
+      id="site-preloader"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div class="site-preloader__inner">
+        <div class="site-preloader__blob"></div>
+        <div class="site-preloader__text">SENSE</div>
+      </div>
+    </div>
+    <div class="morphing-bg" aria-hidden="true">
+      <span class="morphing-bg__shape morphing-bg__shape--1"></span>
+      <span class="morphing-bg__shape morphing-bg__shape--2"></span>
+      <span class="morphing-bg__shape morphing-bg__shape--3"></span>
+    </div>
+    <!-- Фоновая сетка + плавный скролл оборачиваются в Lenis-контейнер -->
+    <div id="lenis-root">
+      <!-- Липкая шапка (на всю ширину) -->
+      <header class="site-header">
+        <div
+          class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
+        >
+          <a
+            href="index.html"
+            class="text-sense-muted text-sm tracking-[0.6em]"
+          >
+            <b>SENSE</b>
+          </a>
+          <nav class="hidden gap-8 md:flex">
+            <a href="#about" class="nav-link" data-scroll>О нас</a>
+            <a href="#works" class="nav-link" data-scroll>Стили портретов</a>
+            <a href="#gallery" class="nav-link" data-scroll>Галерея</a>
+            <a href="#reviews" class="nav-link" data-scroll>Отзывы</a>
+            <a href="#contacts" class="nav-link" data-scroll>Контакты</a>
+          </nav>
+          <button
+            class="js-cta hidden md:inline-flex items-center justify-center rounded-full px-6 py-2.5 text-xs font-medium bg-sense-blob-3 text-white shadow hover:shadow-lg transition-colors"
+            data-scroll
+            data-target="#pricing"
+          >
+            Заказать
+          </button>
+          <button
+            aria-label="Открыть меню"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+            class="js-burger md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/80 text-sense-ink shadow-sm hover:shadow-md transition-all"
+          >
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+          </button>
+        </div>
+      </header>
+      <div id="mobile-menu" class="site-menu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Мобильное меню">
+        <div class="site-menu__panel">
+          <nav class="site-menu__content">
+            <a href="#about" data-scroll class="site-menu__link">О нас</a>
+            <a href="#works" data-scroll class="site-menu__link"
+              >Стили портретов</a
+            >
+            <a href="#gallery" data-scroll class="site-menu__link">Галерея</a>
+            <a href="#reviews" data-scroll class="site-menu__link">Отзывы</a>
+            <a href="#contacts" data-scroll class="site-menu__link">Контакты</a>
+            <a href="#pricing" data-scroll class="site-menu__cta js-cta">Заказать</a>
+          </nav>
+          <button
+            aria-label="Закрыть меню"
+            class="site-menu__close js-menu-close"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <!-- HERO -->
+      <section id="hero" class="relative min-h-screen">
+        <!-- Лавовые кляксы фона -->
+        <div class="pointer-events-none absolute inset-0 -z-10">
+          <div
+            class="blob-bg blob-bg-1"
+            data-base-x="-120"
+            data-base-y="-60"
+          ></div>
+          <div
+            class="blob-bg blob-bg-2"
+            data-base-x="-40"
+            data-base-y="180"
+          ></div>
+          <div
+            class="blob-bg blob-bg-3"
+            data-base-x="260"
+            data-base-y="40"
+          ></div>
+        </div>
+        <div
+          class="relative mx-auto flex min-h-screen max-w-6xl flex-col px-5 pb-16 pt-8 sm:px-8 lg:px-10"
+        >
+          <!-- Основной блок hero -->
+          <div
+            class="grid flex-1 items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]"
+          >
+            <!-- Текст -->
+            <div class="space-y-8">
+              <h1
+                class="js-hero-title font-heading font-demi-bold max-w-2xl text-5xl leading-[1.08] tracking-tight text-white sm:text-6xl sm:leading-[1.06] lg:text-7xl lg:leading-[1.04]"
+              >
+                Портрет по фото на холсте на заказ
+              </h1>
+              <p
+                class="max-w-md text-base leading-relaxed text-sense-muted sm:text-xl"
+              >
+                Создаем потрясающие картины из ваших фотографий. Ручная
+                отрисовка профессиональными художниками на графическом планшете
+                с последующей печатью на холсте галерейной натяжки. Согласование
+                эскиза до печати — вы платите за результат, который вам
+                нравится! Срок изготовления от 2 до 5 дней.
+              </p>
+              <div class="flex flex-wrap items-center gap-4">
+                <span
+                  class="text-xs uppercase tracking-[0.25em] text-sense-muted"
+                >
+                  Индивидуальный подход к каждому портрету
+                </span>
+                <button
+                  class="btn-primary js-cta text-sm"
+                  data-scroll
+                  data-target="#pricing"
+                >
+                  Заказать
+                </button>
+              </div>
+            </div>
+            <!-- Блок с портретом и слайдером -->
+            <div class="relative flex justify-center lg:justify-end">
+              <div class="hero-portrait-wrapper group">
+                <svg
+                  class="hero-portrait-svg"
+                  viewBox="0 0 600 600"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <defs>
+                    <!-- Основная клякса для маски -->
+                    <clipPath
+                      id="heroBlobClip"
+                      clipPathUnits="objectBoundingBox"
+                    >
+                      <!-- Используем нормализованные координаты (0..1) для лучшего масштабирования -->
+                      <path
+                        id="heroBlobPath"
+                        d="M0.81,0.53 C0.79,0.64 0.72,0.73 0.64,0.8 C0.56,0.87 0.47,0.93 0.37,0.94 C0.27,0.96 0.17,0.94 0.1,0.88 C0.04,0.82 0.01,0.72 0.01,0.62 C0,0.52 0.02,0.42 0.06,0.33 C0.1,0.24 0.17,0.16 0.25,0.11 C0.34,0.06 0.44,0.03 0.54,0.04 C0.64,0.05 0.74,0.09 0.8,0.17 C0.86,0.24 0.9,0.33 0.91,0.43 C0.83,0.46 0.83,0.46 0.81,0.53 Z"
+                        data-hover="M0.79,0.55 C0.77,0.67 0.71,0.78 0.62,0.84 C0.53,0.9 0.42,0.92 0.33,0.92 C0.23,0.92 0.15,0.89 0.09,0.82 C0.03,0.75 0,0.65 0,0.55 C0,0.45 0.03,0.35 0.08,0.27 C0.13,0.18 0.21,0.11 0.3,0.07 C0.39,0.03 0.49,0.01 0.59,0.03 C0.69,0.05 0.78,0.1 0.84,0.18 C0.9,0.26 0.93,0.36 0.93,0.46 C0.93,0.55 0.81,0.47 0.79,0.55 Z"
+                      />
+                    </clipPath>
+                  </defs>
+                  <!-- Заливка-клякса под слайдером, использующая ту же форму -->
+                  <g class="hero-blob-bg">
+                    <use
+                      xlink:href="#heroBlobPath"
+                      href="#heroBlobPath"
+                      transform="scale(600)"
+                    />
+                  </g>
+                  <!-- Содержимое слайдера, обрезанное маской -->
+                  <g clip-path="url(#heroBlobClip)">
+                    <!-- Слайды: реальные изображения из папки img -->
+                    <image
+                      xlink:href="img/slider1.webp"
+                      href="img/slider1.webp"
+                      class="hero-slide"
+                      x="0"
+                      y="0"
+                      width="600"
+                      height="600"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                    <image
+                      xlink:href="img/slider2.webp"
+                      href="img/slider2.webp"
+                      class="hero-slide"
+                      x="0"
+                      y="0"
+                      width="600"
+                      height="600"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                    <image
+                      xlink:href="img/slider3.webp"
+                      href="img/slider3.webp"
+                      class="hero-slide"
+                      x="0"
+                      y="0"
+                      width="600"
+                      height="600"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </g>
+                </svg>
+                <!-- Тень под кляксой -->
+                <div class="hero-portrait-shadow" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- О проекте -->
+      <section
+        id="about"
+        class="js-reveal border-t border-sense-blob-2/20 about-section"
+      >
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20 lg:px-10">
+          <div class="about-grid">
+            <article class="about-card about-card--title">
+              <h2 class="about-title about-title--blob">
+                Почему нам доверяют самое ценное — эмоции?
+              </h2>
+              <p class="about-text about-text--uniform">
+                Мы создаём персонализированные портреты, которые становятся
+                настоящими семейными реликвиями. Каждый портрет — результат
+                внимательной ручной отрисовки, продуманного света и цвета, а
+                также тщательного подбора фактуры холста.
+              </p>
+              <p class="about-text about-text--uniform">
+                Вы отправляете нам фотографию — мы превращаем её в
+                эмоциональную, живую работу, подчеркивающую характер и
+                настроение героя.
+              </p>
+            </article>
+            <article class="about-card about-card--stats">
+              <div class="about-stat">
+                <span class="about-icon" aria-hidden="true">
+                  <i class="fa-solid fa-award"></i>
+                </span>
+                <div>
+                  <div class="about-stat-title">С 2018 года</div>
+                  <div class="about-stat-text">
+                    Радуем клиентов. Мы знаем всё о правильной цветопередаче и
+                    натяжке холстов.
+                  </div>
+                </div>
+              </div>
+              <div class="about-stat">
+                <span class="about-icon" aria-hidden="true">
+                  <i class="fa-solid fa-palette"></i>
+                </span>
+                <div>
+                  <div class="about-stat-title">Более 1 000</div>
+                  <div class="about-stat-text">
+                    Нарисованных портретов. От нежных бьюти-артов до сложных
+                    многофигурных шаржей.
+                  </div>
+                </div>
+              </div>
+              <div class="about-stat">
+                <span class="about-icon" aria-hidden="true">
+                  <i class="fa-solid fa-star"></i>
+                </span>
+                <div>
+                  <div class="about-stat-title">5 из 5</div>
+                  <div class="about-stat-text">
+                    Средняя оценка нашей работы по отзывам клиентов (мы всегда
+                    доводим результат до идеала).
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="about-quality">
+            <h3
+              class="about-quality__title fade-in js-fade"
+              data-fade-delay="220"
+              data-fade-duration="600"
+            >
+              Наши стандарты качества
+            </h3>
+            <ul class="about-quality__list">
+              <li
+                class="about-quality__item fade-in js-fade"
+                data-fade-delay="300"
+                data-fade-duration="600"
+              >
+                <span class="about-quality__icon" aria-hidden="true">
+                  <i class="fa-solid fa-gem"></i>
+                </span>
+                <span class="about-quality__text">
+                  <strong>Premium-материалы</strong> — используем исключительно
+                  плотный натуральный хлопковый холст премиум-класса вместо
+                  дешёвой синтетики, которая со временем провисает. Материал имеет
+                  ярко выраженную текстуру, присущую настоящим художественным
+                  полотнам.
+                </span>
+              </li>
+              <li
+                class="about-quality__item fade-in js-fade"
+                data-fade-delay="360"
+                data-fade-duration="600"
+              >
+                <span class="about-quality__icon" aria-hidden="true">
+                  <i class="fa-solid fa-leaf"></i>
+                </span>
+                <span class="about-quality__text">
+                  <strong>Экологичная печать</strong> — печатаем оригинальными
+                  пигментными чернилами без запаха, безопасными для детских
+                  комнат. Они обладают ультрафиолетовой стойкостью и не выцветают
+                  под солнечным светом в течение 100 лет.
+                </span>
+              </li>
+              <li
+                class="about-quality__item fade-in js-fade"
+                data-fade-delay="420"
+                data-fade-duration="600"
+              >
+                <span class="about-quality__icon" aria-hidden="true">
+                  <i class="fa-solid fa-image"></i>
+                </span>
+                <span class="about-quality__text">
+                  <strong>Галерейная натяжка</strong> — изображение продолжается
+                  на торцах подрамника из натуральной сосны, поэтому картину можно
+                  сразу вешать на стену без дополнительной багетной рамы.
+                </span>
+              </li>
+              <li
+                class="about-quality__item fade-in js-fade"
+                data-fade-delay="480"
+                data-fade-duration="600"
+              >
+                <span class="about-quality__icon" aria-hidden="true">
+                  <i class="fa-solid fa-bolt"></i>
+                </span>
+                <span class="about-quality__text">
+                  <strong>Работаем до слова «ВАУ!»</strong> — перед печатью
+                  отправляем готовый электронный эскиз. Все правки (например,
+                  сделать губы ярче или фон светлее) вносим бесплатно до полного
+                  удовлетворения и восторженного отклика.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <!-- Наши работы -->
+      <section id="works" class="js-reveal">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div
+            class="mb-10 flex flex-col justify-center gap-4 sm:flex-row sm:items-end"
+          >
+            <h2 class="text-2xl font-heading text-sense-ink sm:text-3xl">
+              Стили портретов
+            </h2>
+          </div>
+          <div class="grid gap-8 md:grid-cols-3">
+            <!-- Карточка работы -->
+            <article class="space-y-4">
+              <div class="work-blob">
+                <img
+                  src="img/stili1.webp"
+                  alt="Портрет девушки в тёплых оттенках"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Дрим Арт</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Сказочный портрет в акварельных тонах.
+              </p>
+            </article>
+            <article class="space-y-4">
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/stili2.webp"
+                  alt="Портрет пары"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Бьюти Арт</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Beauty Art: Гламурный портрет с сочными акцентами.
+              </p>
+            </article>
+            <article class="space-y-4">
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/stili3.webp"
+                  alt="Семейный портрет"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Шарж</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Забавный цифровой портрет с акцентом на характер.
+              </p>
+            </article>
+            <article class="space-y-4">
+              <div class="work-blob">
+                <img
+                  src="img/stili4.webp"
+                  alt="Городской портрет"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Инфинити</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Монохромное лицо в вихре ярких брызг.
+              </p>
+            </article>
+            <article class="space-y-4">
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/stili5.webp"
+                  alt="Портрет в пастельных тонах"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Digital Art</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Современная цифровая живопись на холсте..
+              </p>
+            </article>
+            <article class="space-y-4">
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/stili6.webp"
+                  alt="Портрет с акцентом на свет"
+                  class="work-blob__image"
+                />
+              </div>
+              <h3 class="text-sm font-medium text-sense-ink">Печать на холсте</h3>
+              <p class="text-xs leading-relaxed text-sense-muted">
+                Печать фотографии на холсте с галерейной натяжкой на подрамник.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section id="before-after" class="js-reveal before-after-section">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="mb-10 flex flex-col justify-center gap-4 sm:flex-row sm:items-end">
+            <h2 class="text-2xl font-heading text-sense-ink sm:text-3xl">До и после</h2>
+          </div>
+          <div class="before-after" data-before-after>
+            <img
+              src="img/before.webp"
+              alt="Исходное изображение портрета"
+              class="before-after__image before-after__image--before"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="before-after__after">
+              <img
+                src="img/after.webp"
+                alt="Обработанное изображение портрета"
+                class="before-after__image before-after__image--after"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="before-after__labels">
+              <span class="before-after__label before-after__label--before">До</span>
+              <span class="before-after__label before-after__label--after">После</span>
+            </div>
+            <div class="before-after__handle" aria-hidden="true"></div>
+            <input
+              class="before-after__range"
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+              aria-label="Переключение между до и после"
+            />
+          </div>
+        </div>
+      </section>
+      <section id="gift" class="js-reveal">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="gift-card">
+            <div class="gift-gooey" aria-hidden="true">
+              <span class="gift-gooey__blob gift-gooey__blob--1"></span>
+              <span class="gift-gooey__blob gift-gooey__blob--2"></span>
+              <span class="gift-gooey__blob gift-gooey__blob--3"></span>
+            </div>
+            <div class="gift-content">
+              <span class="gift-kicker">Для кого это станет идеальным подарком?</span>
+              <h2 class="gift-title">
+                Оригинальный подарок, который точно вызовет восторг!
+              </h2>
+              <p class="gift-text">
+                Ищете, что подарить человеку, у которого всё есть? Картина на холсте
+                по фотографии — это эмоции, запечатленные на долгие годы.
+              </p>
+              <div class="gift-list">
+                <div class="gift-item">
+                  <div class="gift-item__title">В подарок девушке или жене</div>
+                  <div class="gift-item__text">
+                    Закажите женский портрет в стиле Бьюти или Дрим Арт — она будет
+                    в восторге от того, какой красивой вы её видите.
+                  </div>
+                </div>
+                <div class="gift-item">
+                  <div class="gift-item__title">Родителям на годовщину свадьбы</div>
+                  <div class="gift-item__text">
+                    Объединим ваши старые снимки в красивый семейный портрет по фото.
+                  </div>
+                </div>
+                <div class="gift-item">
+                  <div class="gift-item__title">Начальнику или коллеге</div>
+                  <div class="gift-item__text">
+                    Шарж в подарок — идеальное решение для корпоративного праздника.
+                    Подчеркнем профессиональные качества с юмором!
+                  </div>
+                </div>
+              </div>
+            </div>
+            <svg class="gift-gooey__filter" aria-hidden="true">
+              <filter id="gift-gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                  result="gooey"
+                />
+                <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
+              </filter>
+            </svg>
+          </div>
+        </div>
+      </section>
+      <section id="steps" class="js-reveal">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="steps-card">
+            <div class="steps-header">
+              <h2 class="steps-title">Как заказать портрет по фото? 4 простых шага</h2>
+              <p class="steps-text">
+                Четкий и понятный процесс оформления заказа с прозрачными этапами и
+                сопровождением на каждом шаге.
+              </p>
+            </div>
+            <ol class="timeline">
+              <li class="timeline-item">
+                <a
+                  class="timeline-card js-timeline-item fade-in js-fade"
+                  data-fade-delay="150"
+                  data-fade-duration="600"
+                  href="#order"
+                  data-scroll
+                >
+                  <div class="timeline-item__index">01</div>
+                  <div class="timeline-item__meta">
+                    <span class="timeline-item__icon" aria-hidden="true">
+                      <i class="fa-solid fa-file-signature"></i>
+                    </span>
+                    <time class="timeline-item__time" datetime="P0D">Сегодня</time>
+                  </div>
+                  <h3 class="timeline-item__title">Оставьте заявку</h3>
+                  <p class="timeline-item__text">
+                    Заполните форму с размером, стилем и контактами. Приложите фото
+                    и пожелания, чтобы мы сразу поняли задачу.
+                  </p>
+                </a>
+              </li>
+              <li class="timeline-item">
+                <a
+                  class="timeline-card js-timeline-item fade-in js-fade"
+                  data-fade-delay="240"
+                  data-fade-duration="600"
+                  href="#order"
+                  data-scroll
+                >
+                  <div class="timeline-item__index">02</div>
+                  <div class="timeline-item__meta">
+                    <span class="timeline-item__icon" aria-hidden="true">
+                      <i class="fa-solid fa-pen-nib"></i>
+                    </span>
+                    <time class="timeline-item__time" datetime="P1D">1 день</time>
+                  </div>
+                  <h3 class="timeline-item__title">Подготовим эскиз</h3>
+                  <p class="timeline-item__text">
+                    Художник создает эскиз, уточняет детали и отправляет вам для
+                    согласования с возможностью правок.
+                  </p>
+                </a>
+              </li>
+              <li class="timeline-item">
+                <a
+                  class="timeline-card js-timeline-item fade-in js-fade"
+                  data-fade-delay="330"
+                  data-fade-duration="600"
+                  href="#order"
+                  data-scroll
+                >
+                  <div class="timeline-item__index">03</div>
+                  <div class="timeline-item__meta">
+                    <span class="timeline-item__icon" aria-hidden="true">
+                      <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                    <time class="timeline-item__time" datetime="P2D">2 дня</time>
+                  </div>
+                  <h3 class="timeline-item__title">Утвердите результат</h3>
+                  <p class="timeline-item__text">
+                    После финальных правок вы утверждаете работу, и мы запускаем
+                    печать на натуральном холсте.
+                  </p>
+                </a>
+              </li>
+              <li class="timeline-item">
+                <a
+                  class="timeline-card js-timeline-item fade-in js-fade"
+                  data-fade-delay="420"
+                  data-fade-duration="600"
+                  href="#order"
+                  data-scroll
+                >
+                  <div class="timeline-item__index">04</div>
+                  <div class="timeline-item__meta">
+                    <span class="timeline-item__icon" aria-hidden="true">
+                      <i class="fa-solid fa-truck-fast"></i>
+                    </span>
+                    <time class="timeline-item__time" datetime="P4D">2–5 дней</time>
+                  </div>
+                  <h3 class="timeline-item__title">Получите картину</h3>
+                  <p class="timeline-item__text">
+                    Аккуратно упаковываем и отправляем заказ. Картина готова к
+                    размещению на стене сразу после получения.
+                  </p>
+                </a>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+      <section id="faq" class="js-reveal" itemscope itemtype="https://schema.org/FAQPage">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="faq-card">
+            <div class="faq-blob" aria-hidden="true">
+              <svg class="faq-blob__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <rect class="faq-blob__shape" x="0" y="0" width="100" height="100" rx="50" ry="50"></rect>
+              </svg>
+            </div>
+            <div class="faq-header">
+              <h2 class="faq-title">Часто задаваемые вопросы</h2>
+              <p class="faq-subtitle">
+                Коротко отвечаем на самые частые сомнения о качестве, объединении людей
+                и материалах, чтобы вы были уверены в результате.
+              </p>
+            </div>
+            <div class="faq-list">
+              <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="faq-summary">
+                  <span itemprop="name">
+                    Боюсь, что размытое фото не даст хорошую картину по фото и цифровой портрет,
+                    особенно если нужна реставрация старых фотографий — Присылайте то, что есть?
+                  </span>
+                </summary>
+                <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                  <div class="faq-text" itemprop="text">
+                    Мы аккуратно подтягиваем резкость, контраст и цвет, сохраняя естественные черты,
+                    а при необходимости делаем деликатную реставрацию: убираем заломы, шум и дефекты.
+                    Если исходник совсем слабый, предложим оптимальный вариант стилизации, чтобы
+                    итоговый цифровой портрет смотрелся цельно и реалистично.
+                  </div>
+                </div>
+              </details>
+              <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="faq-summary">
+                  <span itemprop="name">
+                    Можно ли объединить людей с разных снимков в один семейный коллаж в стиле
+                    digital-art, чтобы получилось ровно и без «вырезанных» лиц — Получится прекрасный общий семейный портрет?
+                  </span>
+                </summary>
+                <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                  <div class="faq-text" itemprop="text">
+                    Да, мы сопоставляем масштаб, перспективу и освещение, подбираем единую
+                    композицию и тональность, чтобы персонажи выглядели как одна история.
+                    В результате семейный коллаж не читается как склейка, а выглядит как
+                    единый художественный digital-art портрет, который приятно дарить близким.
+                  </div>
+                </div>
+              </details>
+              <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary class="faq-summary">
+                  <span itemprop="name">
+                    Насколько качественны материалы, если нужна печать на холсте и плоттерная печать,
+                    и реально ли это как доступный подарок — купить картину по фото можно недорого?
+                  </span>
+                </summary>
+                <div class="faq-body" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                  <div class="faq-text" itemprop="text">
+                    Мы используем плотный натуральный холст и стойкие пигментные чернила, чтобы
+                    цвета оставались насыщенными, а текстура холста подчеркивала художественный эффект.
+                    Плоттерная печать обеспечивает стабильную детализацию по всей площади, а варианты
+                    оформления позволяют подобрать бюджет без потери качества.
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="gallery" class="js-reveal">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="mb-10 flex flex-col justify-center gap-4 sm:flex-row sm:items-end">
+            <h2 class="text-2xl font-heading text-sense-ink sm:text-3xl">
+              Галерея наших работ
+            </h2>
+          </div>
+          <div class="grid gap-8 md:grid-cols-3">
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-1"
+              aria-labelledby="gallery-title-1"
+              aria-describedby="gallery-title-1"
+            >
+              <div class="work-blob">
+                <img
+                  src="img/stili1.webp"
+                  alt="Портрет девушки в тёплых оттенках"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-1">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-1">Дрим Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-2"
+              aria-labelledby="gallery-title-2"
+              aria-describedby="gallery-title-2"
+            >
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/stili2.webp"
+                  alt="Портрет пары"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-2">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-2">Бьюти Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-3"
+              aria-labelledby="gallery-title-3"
+              aria-describedby="gallery-title-3"
+            >
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/stili3.webp"
+                  alt="Семейный портрет"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-3">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-3">Шарж</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-4"
+              aria-labelledby="gallery-title-4"
+              aria-describedby="gallery-title-4"
+            >
+              <div class="work-blob">
+                <img
+                  src="img/stili4.webp"
+                  alt="Городской портрет"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-4">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-4">Инфинити</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-5"
+              aria-labelledby="gallery-title-5"
+              aria-describedby="gallery-title-5"
+            >
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/stili5.webp"
+                  alt="Портрет в пастельных тонах"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-5">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-5">Digital Art</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-6"
+              aria-labelledby="gallery-title-6"
+              aria-describedby="gallery-title-6"
+            >
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/1.webp"
+                  alt="Портрет с акцентом на свет"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-6">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-6">Бьюти Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-7"
+              aria-labelledby="gallery-title-7"
+              aria-describedby="gallery-title-7"
+            >
+              <div class="work-blob">
+                <img
+                  src="img/slider1.webp"
+                  alt="Портрет девушки с мягким светом"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-7">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-7">Бьюти Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-8"
+              aria-labelledby="gallery-title-8"
+              aria-describedby="gallery-title-8"
+            >
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/slider2.webp"
+                  alt="Портрет пары в светлой гамме"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-8">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-8">Дрим Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-9"
+              aria-labelledby="gallery-title-9"
+              aria-describedby="gallery-title-9"
+            >
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/slider3.webp"
+                  alt="Семейный портрет с мягкими тенями"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-9">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-9">Бьюти Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-10"
+              aria-labelledby="gallery-title-10"
+              aria-describedby="gallery-title-10"
+            >
+              <div class="work-blob">
+                <img
+                  src="img/2.webp"
+                  alt="Дрим Арт"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-10">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-10">Дрим Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-11"
+              aria-labelledby="gallery-title-11"
+              aria-describedby="gallery-title-11"
+            >
+              <div class="work-blob work-blob--medium">
+                <img
+                  src="img/3.webp"
+                  alt="Портрет в городской атмосфере"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-11">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-11">Дрим Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article
+              class="space-y-4 gallery-item"
+              tabindex="0"
+              role="button"
+              aria-expanded="false"
+              aria-controls="gallery-overlay-12"
+              aria-labelledby="gallery-title-12"
+              aria-describedby="gallery-title-12"
+            >
+              <div class="work-blob work-blob--small">
+                <img
+                  src="img/4.webp"
+                  alt="Портрет в нежной палитре"
+                  class="work-blob__image"
+                />
+                <div class="gallery-overlay" id="gallery-overlay-12">
+                  <div class="gallery-overlay__content">
+                    <h3 class="gallery-overlay__title" id="gallery-title-12">Дрим Арт</h3>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section id="reviews" class="reviews-section">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="reviews-card">
+            <div class="reviews-header">
+              <h2 class="reviews-title">Отзывы</h2>
+              <p class="reviews-text">
+                Реальные впечатления клиентов, которые уже получили свои портреты.
+              </p>
+            </div>
+            <div class="reviews-grid">
+              <div class="reviews-item">
+                <img
+                  src="img/otzivy1.webp"
+                  alt="Отзыв клиента о качестве портрета"
+                  class="reviews-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="reviews-item">
+                <img
+                  src="img/otzivy2.webp"
+                  alt="Отзыв клиента о сроках и упаковке"
+                  class="reviews-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="reviews-item">
+                <img
+                  src="img/otzivy3.webp"
+                  alt="Отзыв клиента о деталях и цветопередаче"
+                  class="reviews-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="reviews-item">
+                <img
+                  src="img/otzivy4.webp"
+                  alt="Отзыв клиента о результате и эмоциях"
+                  class="reviews-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="reviews-modal" id="reviews-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Просмотр отзыва">
+        <div class="reviews-modal__backdrop" data-review-close></div>
+        <div class="reviews-modal__content" role="document">
+          <button class="reviews-modal__close" type="button" aria-label="Закрыть">×</button>
+          <img class="reviews-modal__image" alt="" />
+        </div>
+      </div>
+      <section id="pricing">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="pricing-card">
+            <div class="pricing-gooey" aria-hidden="true">
+              <span class="pricing-gooey__blob pricing-gooey__blob--1"></span>
+              <span class="pricing-gooey__blob pricing-gooey__blob--2"></span>
+              <span class="pricing-gooey__blob pricing-gooey__blob--3"></span>
+            </div>
+            <svg class="pricing-gooey__filter" aria-hidden="true">
+              <filter id="pricing-gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"
+                  result="gooey"
+                />
+                <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
+              </filter>
+            </svg>
+            <div class="pricing-header">
+              <h2 class="pricing-title">Цены на печать фото на холсте и отрисовку</h2>
+              <p class="pricing-text">
+                Итоговая стоимость картины по фото складывается из работы художника
+                (зависит от количества лиц и размера холста).
+              </p>
+            </div>
+            <form class="pricing-form" id="pricing-calculator" action="/api/lead" method="post" novalidate>
+              <input type="text" name="company" class="pricing-honeypot" autocomplete="off" tabindex="-1" aria-hidden="true" />
+              <input type="hidden" name="form_started_at" value="" />
+              <input type="hidden" name="total" data-price-total-input value="" />
+              <div class="pricing-grid">
+                <div class="pricing-row">
+                  <div class="pricing-field">
+                    <label class="pricing-label" id="pricing-style-label" for="pricing-style">Стиль портрета</label>
+                    <div class="pricing-select" data-pricing-select>
+                      <select
+                        class="pricing-control pricing-control--native"
+                        id="pricing-style"
+                        name="style"
+                        aria-describedby="pricing-style-error"
+                        required
+                      >
+                        <option value="" disabled selected>Выберите стиль</option>
+                        <option value="dream-art">Дрим Арт</option>
+                        <option value="beauty-art">Beauty Art</option>
+                        <option value="caricature">Шарж</option>
+                        <option value="infinity">Инфинити</option>
+                        <option value="gta">Digital Art</option>
+                        <option value="canvas">Печать на холсте</option>
+                      </select>
+                      <button
+                        class="pricing-select__trigger"
+                        type="button"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-controls="pricing-style-list"
+                      >
+                        <span class="pricing-select__value">Выберите стиль</span>
+                        <span class="pricing-select__icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              d="M6 9.5l6 5 6-5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <div
+                        class="pricing-select__list"
+                        id="pricing-style-list"
+                        role="listbox"
+                        aria-hidden="true"
+                        aria-labelledby="pricing-style-label"
+                      >
+                        <button
+                          class="pricing-select__option is-placeholder"
+                          type="button"
+                          role="option"
+                          data-value=""
+                          aria-disabled="true"
+                        >
+                          Выберите стиль
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="dream-art">
+                          Дрим Арт
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="beauty-art">
+                          Beauty Art
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="caricature">
+                          Шарж
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="infinity">
+                          Инфинити
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="gta">
+                          Digital Art
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="canvas">
+                          Печать на холсте
+                        </button>
+                      </div>
+                    </div>
+                    <span class="pricing-error" id="pricing-style-error" role="status"></span>
+                  </div>
+                  <div class="pricing-field">
+                    <label class="pricing-label" id="pricing-size-label" for="pricing-size">Размер холста</label>
+                    <div class="pricing-select" data-pricing-select>
+                      <select
+                        class="pricing-control pricing-control--native"
+                        id="pricing-size"
+                      name="size"
+                        data-price-size
+                      >
+                        <option value="2790">20×30 см</option>
+                        <option value="2890">30×30 см</option>
+                        <option value="2990">30×40 см</option>
+                        <option value="3190">40×40 см</option>
+                        <option value="3290">40×50 см</option>
+                        <option value="3390">40×60 см</option>
+                        <option value="3490">50×50 см</option>
+                        <option value="3590">50×60 см</option>
+                        <option value="3790">50×70 см</option>
+                        <option value="3790">60×60 см</option>
+                        <option value="3990">60×70 см</option>
+                        <option value="4190">60×80 см</option>
+                        <option value="4390">60×90 см</option>
+                        <option value="4190">70×70 см</option>
+                        <option value="4390">70×80 см</option>
+                        <option value="4590">70×90 см</option>
+                        <option value="4590">80×80 см</option>
+                        <option value="4890">80×90 см</option>
+                        <option value="4990">80×100 см</option>
+                        <option value="5590">80×120 см</option>
+                      </select>
+                      <button
+                        class="pricing-select__trigger"
+                        type="button"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-controls="pricing-size-list"
+                      >
+                        <span class="pricing-select__value">20×30 см</span>
+                        <span class="pricing-select__icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              d="M6 9.5l6 5 6-5"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <div
+                        class="pricing-select__list"
+                        id="pricing-size-list"
+                        role="listbox"
+                        aria-hidden="true"
+                        aria-labelledby="pricing-size-label"
+                      >
+                        <button class="pricing-select__option" type="button" role="option" data-value="2790">
+                          20×30 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="2890">
+                          30×30 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="2990">
+                          30×40 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3190">
+                          40×40 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3290">
+                          40×50 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3390">
+                          40×60 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3490">
+                          50×50 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3590">
+                          50×60 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3790">
+                          50×70 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3790">
+                          60×60 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="3990">
+                          60×70 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4190">
+                          60×80 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4390">
+                          60×90 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4190">
+                          70×70 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4390">
+                          70×80 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4590">
+                          70×90 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4590">
+                          80×80 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4890">
+                          80×90 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="4990">
+                          80×100 см
+                        </button>
+                        <button class="pricing-select__option" type="button" role="option" data-value="5590">
+                          80×120 см
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pricing-field">
+                    <label class="pricing-label" for="pricing-people">Количество лиц</label>
+                    <input
+                      class="pricing-control pricing-people"
+                      id="pricing-people"
+                      name="people"
+                      type="number"
+                      min="1"
+                      step="1"
+                      value="1"
+                      inputmode="numeric"
+                      aria-describedby="pricing-people-error"
+                      required
+                      data-price-people
+                    />
+                    <span class="pricing-error" id="pricing-people-error" role="status"></span>
+                  </div>
+                </div>
+                <div class="pricing-field">
+                  <span class="pricing-label">Покрытие</span>
+                  <label class="pricing-check">
+                    <input type="checkbox" name="lacquer" value="1" data-price-lacquer />
+                    <span>Лаком</span>
+                  </label>
+                  <label class="pricing-check">
+                    <input type="checkbox" name="gel" value="1" data-price-gel />
+                    <span>Текстурным гелем</span>
+                  </label>
+                </div>
+              </div>
+              <div class="pricing-field">
+                <label class="pricing-label" for="pricing-message">Пожелания к портрету</label>
+                <textarea
+                  class="pricing-textarea"
+                  id="pricing-message"
+                  name="message"
+                  rows="4"
+                  placeholder="Опишите пожелания, стиль, детали фона или композиции"
+                ></textarea>
+              </div>
+              <div class="pricing-contacts">
+                <div class="pricing-field">
+                  <label class="pricing-label" for="pricing-name">Имя</label>
+                  <input
+                    class="pricing-control"
+                    id="pricing-name"
+                    name="name"
+                    type="text"
+                    minlength="2"
+                    placeholder="Введите ваше имя"
+                    aria-describedby="pricing-name-error"
+                    required
+                  />
+                  <span class="pricing-error" id="pricing-name-error" role="status"></span>
+                </div>
+                <div class="pricing-field">
+                  <label class="pricing-label" for="pricing-phone">Телефон</label>
+                  <input
+                    class="pricing-control"
+                    id="pricing-phone"
+                    name="phone"
+                    type="tel"
+                    inputmode="tel"
+                    placeholder="+7(XXX)XXX-XX-XX"
+                    aria-describedby="pricing-phone-error"
+                    required
+                  />
+                  <span class="pricing-error" id="pricing-phone-error" role="status"></span>
+                </div>
+                <div class="pricing-field">
+                  <label class="pricing-label" for="pricing-email">Email</label>
+                  <input
+                    class="pricing-control"
+                    id="pricing-email"
+                    name="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    aria-describedby="pricing-email-error"
+                    required
+                  />
+                  <span class="pricing-error" id="pricing-email-error" role="status"></span>
+                </div>
+              </div>
+              <div class="pricing-status" role="status" aria-live="polite"></div>
+              <div class="pricing-summary">
+                <div class="pricing-summary__main">
+                  <div class="pricing-summary__price">
+                    <span class="pricing-summary__label">Итоговая стоимость</span>
+                    <span class="pricing-summary__value" data-price-total>2790 р.</span>
+                  </div>
+                </div>
+                <ul class="pricing-features" aria-label="Ключевые особенности">
+                  <li>Улучшение качества фото</li>
+                  <li>Натуральный хлопковый холст</li>
+                  <li>Подрамник и галерейная натяжка</li>
+                </ul>
+              </div>
+              <div class="pricing-actions">
+                <label class="pricing-file">
+                  <input type="file" name="photo" accept="image/*" />
+                  <span>Прикрепить фото</span>
+                </label>
+                <button class="pricing-submit js-cta pricing-submit--primary" type="submit">
+                  Отправить
+                </button>
+              </div>
+            </form>
+            <details class="pricing-details">
+              <summary class="pricing-details__summary">Подробности и условия</summary>
+              <div class="pricing-details__body">
+                <div class="pricing-footnote">
+                  В стоимость уже включено: Улучшение качества фото, работа художника,
+                  печать на натуральном хлопковом холсте, сосновый подрамник, галерейная
+                  натяжка и крепление на стену. Изготовление портретов на заказ происходит
+                  без скрытых платежей!
+                </div>
+                <div class="pricing-warning">
+                  Внимание! Стоимость указана за одно нарисованное лицо. Стоимость за
+                  дополнительно нарисованного человека - 500 рублей. <br>В стоимость не входит
+                  стоимость доставки.
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+      <section id="contacts" class="js-reveal contacts-section" aria-labelledby="contacts-title">
+        <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+          <div class="contacts-card">
+            <div class="contacts-blob" aria-hidden="true">
+              <span class="contacts-blob__shape contacts-blob__shape--1"></span>
+              <span class="contacts-blob__shape contacts-blob__shape--2"></span>
+              <span class="contacts-blob__shape contacts-blob__shape--3"></span>
+            </div>
+            <div class="contacts-content">
+              <div class="contacts-header">
+                <h2 class="contacts-title" id="contacts-title">Контакты</h2>
+                <p class="contacts-text">
+                  Напишите или позвоните — подскажем по стилям, срокам и оформлению заказа.
+                </p>
+              </div>
+              <div class="contacts-grid" role="list">
+                <div class="contacts-item" role="listitem">
+                  <span class="contacts-icon" aria-hidden="true">
+                    <i class="fa-solid fa-phone"></i>
+                  </span>
+                  <div class="contacts-info">
+                    <span class="contacts-label">Телефон</span>
+                    <a
+                      class="contacts-link"
+                      href="tel:+79179896191"
+                      aria-label="Позвонить по номеру +7 (917) 989 61-91"
+                    >
+                      +7 (917) 989 61-91
+                    </a>
+                  </div>
+                </div>
+                <div class="contacts-item" role="listitem">
+                  <span class="contacts-icon" aria-hidden="true">
+                    <i class="fa-solid fa-envelope"></i>
+                  </span>
+                  <div class="contacts-info">
+                    <span class="contacts-label">Email</span>
+                    <a
+                      class="contacts-link"
+                      href="mailto:sense-studio@ya.ru"
+                      aria-label="Написать на email sense-studio@ya.ru"
+                    >
+                      sense-studio@ya.ru
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="contacts-social" aria-label="Социальные сети">
+                <a
+                  class="contacts-social__link"
+                  href="https://www.instagram.com/sense_art_project/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram SENSE"
+                >
+                  <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a
+                  class="contacts-social__link"
+                  href="https://vk.com/sense_art_project"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="ВКонтакте SENSE"
+                >
+                  <i class="fa-brands fa-vk"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer class="site-footer" itemscope itemtype="https://schema.org/WPFooter">
+        <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+          <div class="footer-card" itemscope itemtype="https://schema.org/Organization">
+            <span class="footer-logo" itemprop="name">SENSE</span>
+            <span class="footer-text">© 2026 SENSE. Все права защищены.</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- GSAP, ScrollTrigger, Lenis -->
+    <!-- Без integrity, чтобы исключить блокировку из‑за несовпадения хеша -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.35/dist/lenis.min.js"></script>
+    <!-- Наш основной фронтенд-код -->
+    <script src="elasticScale.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
