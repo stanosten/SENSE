@@ -1,7 +1,45 @@
 let lenis;
 
+const perfInfo = (() => {
+  const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData =
+    navigator && navigator.connection && navigator.connection.saveData;
+  const deviceMemory =
+    navigator && typeof navigator.deviceMemory === "number"
+      ? navigator.deviceMemory
+      : null;
+  const hardwareConcurrency =
+    navigator && typeof navigator.hardwareConcurrency === "number"
+      ? navigator.hardwareConcurrency
+      : null;
+  const lowPerf =
+    Boolean(saveData) ||
+    (deviceMemory !== null && deviceMemory <= 4) ||
+    (hardwareConcurrency !== null && hardwareConcurrency <= 4);
+  const coarsePointer =
+    window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  return {
+    prefersReducedMotion,
+    lowPerf,
+    coarsePointer,
+    reduceMotion: prefersReducedMotion || lowPerf,
+  };
+})();
+
+const getPerfInfo = () => perfInfo;
+
+document.documentElement.classList.toggle("is-low-perf", perfInfo.lowPerf);
+document.documentElement.classList.toggle("is-reduced-motion", perfInfo.prefersReducedMotion);
+
 function initLenis() {
   const root = document.documentElement;
+  const perf = getPerfInfo();
+  if (perf.reduceMotion) {
+    root.classList.add("scroll-smooth");
+    return;
+  }
   if (typeof Lenis === "undefined") {
     root.classList.add("scroll-smooth");
     return;
@@ -33,14 +71,19 @@ function initPreloader() {
   if (!preloader) return;
 
   const hide = () => {
-    preloader.remove();
+    if (preloader.classList.contains("is-hidden")) return;
+    preloader.classList.add("is-hidden");
+    window.setTimeout(() => {
+      preloader.remove();
+    }, 700);
   };
 
-  if (document.readyState === "complete") {
-    hide();
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    requestAnimationFrame(hide);
   } else {
-    window.addEventListener("load", hide);
+    window.addEventListener("DOMContentLoaded", () => requestAnimationFrame(hide), { once: true });
   }
+  window.addEventListener("load", hide, { once: true });
 }
 
 function initSmoothAnchors() {
@@ -167,13 +210,9 @@ function initRevealOnScroll() {
 
   const sections = gsap.utils.toArray(".js-reveal");
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const lowPerf =
-    (navigator && navigator.connection && navigator.connection.saveData) ||
-    (navigator && typeof navigator.deviceMemory === "number" && navigator.deviceMemory <= 4) ||
-    (navigator && typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4);
+  const perf = getPerfInfo();
+  const prefersReducedMotion = perf.reduceMotion;
+  const lowPerf = perf.lowPerf;
 
   if (!sections.length) return;
 
@@ -570,6 +609,8 @@ function initBlobBg3Intro() {
 
 function initFloatingBlobs() {
   if (!window.gsap) return;
+  const perf = getPerfInfo();
+  if (perf.reduceMotion) return;
 
   const blobs = gsap.utils.toArray(".blob-bg:not(.blob-bg-3)");
   if (!blobs.length) return;
@@ -637,6 +678,8 @@ function initStickyHeader() {
 
 function initHeroBlobFloat() {
   if (!window.gsap) return;
+  const perf = getPerfInfo();
+  if (perf.reduceMotion) return;
 
   const wrapper = document.querySelector(".hero-portrait-wrapper");
   if (!wrapper) return;
@@ -666,10 +709,19 @@ function initHeroBlobFloat() {
 
 function initHeroSlider() {
   if (!window.gsap) return;
+  const perf = getPerfInfo();
 
   const slides = gsap.utils.toArray(".hero-slide");
   if (slides.length <= 1) {
     if (slides[0]) slides[0].classList.add("is-active");
+    return;
+  }
+  if (perf.reduceMotion) {
+    slides.forEach((slide, index) => {
+      slide.style.display = "block";
+      gsap.set(slide, { opacity: index === 0 ? 1 : 0, scale: 1, xPercent: 0 });
+      slide.classList.toggle("is-active", index === 0);
+    });
     return;
   }
 
@@ -716,17 +768,46 @@ function initHeroSlider() {
     currentIndex = nextIndex;
   };
 
-  const loop = () => {
-    const nextIndex = (currentIndex + 1) % slides.length;
-    showSlide(nextIndex);
-    gsap.delayedCall(4.2, loop);
+  let active = true;
+  let timer = null;
+
+  const schedule = (delay) => {
+    if (!active) return;
+    if (timer) timer.kill();
+    timer = gsap.delayedCall(delay, loop);
   };
 
-  gsap.delayedCall(3, loop);
+  const loop = () => {
+    if (!active) return;
+    const nextIndex = (currentIndex + 1) % slides.length;
+    showSlide(nextIndex);
+    schedule(4.2);
+  };
+
+  if ("IntersectionObserver" in window) {
+    const wrapper = document.querySelector(".hero-portrait-wrapper");
+    if (wrapper) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          active = entry.isIntersecting || entry.intersectionRatio > 0;
+          if (!active && timer) timer.kill();
+          if (active) schedule(1);
+        },
+        { threshold: [0, 0.2, 0.6, 1] }
+      );
+      observer.observe(wrapper);
+    }
+  }
+
+  schedule(3);
 }
 
 function initHeroBlobHover() {
   if (!window.gsap) return;
+  const perf = getPerfInfo();
+  if (perf.reduceMotion || perf.coarsePointer) return;
 
   const wrapper = document.querySelector(".hero-portrait-wrapper");
   const blobPath = document.querySelector("#heroBlobPath");
@@ -810,6 +891,8 @@ function initHeroBlobHover() {
 
 function initWorkBlobsHover() {
   if (!window.gsap) return;
+  const perf = getPerfInfo();
+  if (perf.reduceMotion || perf.coarsePointer) return;
 
   const items = gsap.utils.toArray("#works .work-blob");
 
@@ -1379,9 +1462,7 @@ function initTimelineMorphOnScroll() {
   const cards = Array.from(document.querySelectorAll(".js-timeline-item"));
   if (!cards.length) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const blob = [0.58, 0.42, 0.52, 0.48, 0.54, 0.46, 0.56, 0.44];
@@ -1434,9 +1515,7 @@ function initAboutQualityMorphOnScroll() {
   const section = document.querySelector(".about-quality");
   if (!section) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const startRadius = 999;
   const endRadius = 28;
@@ -1493,9 +1572,7 @@ function initPricingMorphOnScroll() {
   const card = document.querySelector(".pricing-card");
   if (!card) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const startRadius = 999;
   const computed = window.getComputedStyle(card);
@@ -1556,9 +1633,7 @@ function initSectionMorphOnScroll() {
     { selector: ".contacts-card", fallbackRadius: 32 },
   ];
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -1658,9 +1733,7 @@ function initGiftMorphOnScroll() {
   const card = document.querySelector(".gift-card");
   if (!card) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const computed = window.getComputedStyle(card);
   const endRadiusRaw = parseFloat(computed.borderTopLeftRadius || "0");
@@ -1745,9 +1818,7 @@ function initFaqBlobMorph() {
   const shape = section.querySelector(".faq-blob__shape");
   if (!card || !blob || !shape) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   if (typeof SVGRectElement === "undefined" || !shape.setAttribute) return;
 
@@ -1838,9 +1909,7 @@ function initAboutStatsBlob() {
   const card = document.querySelector(".about-card--stats");
   if (!card) return;
 
-  const prefersReducedMotion =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = getPerfInfo().reduceMotion;
 
   const computed = window.getComputedStyle(card);
   const endRadiusRaw = parseFloat(computed.borderTopLeftRadius || "0");

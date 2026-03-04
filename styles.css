@@ -3218,3 +3218,30 @@ body.is-menu-open {
   }
 }
 
+html.is-low-perf .site-preloader__blob,
+html.is-low-perf .morphing-bg__shape,
+html.is-low-perf .blob-bg,
+html.is-low-perf .hero-portrait-wrapper,
+html.is-low-perf .work-blob,
+html.is-low-perf .work-blob__image,
+html.is-low-perf .about-quality::before,
+html.is-low-perf .gift-gooey__blob,
+html.is-low-perf .contacts-blob__shape,
+html.is-low-perf .pricing-card::before,
+html.is-low-perf .pricing-card::after,
+html.is-low-perf .pricing-gooey__blob {
+  animation: none;
+}
+
+html.is-low-perf .gift-title,
+html.is-low-perf .steps-title,
+html.is-low-perf .reviews-title,
+html.is-low-perf .contacts-title,
+html.is-low-perf .pricing-title,
+html.is-low-perf #works h2,
+html.is-low-perf #before-after h2,
+html.is-low-perf #gallery h2,
+html.is-low-perf .faq-title {
+  animation: none;
+  background-position: 0% 0%;
+}
